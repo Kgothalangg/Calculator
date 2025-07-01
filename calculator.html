@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Calculator</title>
+</head>
+<body>
+    <div class="calculator">
+        <input type="text" id="inputBox" readonly>
+        <div class="button-grid">
+            <button class="calc-button ACButton" onclick="clearDisplay()">AC</button>
+            <button class="calc-button operatorButton" onclick="toggleSign()">+/-</button>
+            <button class="calc-button operatorButton" onclick="percentage()">%</button>
+            <button class="calc-button operatorButton" onclick="setOperation('/')">/</button>
+            
+            <button class="calc-button digitButton" onclick="appendNumber('7')">7</button>
+            <button class="calc-button digitButton" onclick="appendNumber('8')">8</button>
+            <button class="calc-button digitButton" onclick="appendNumber('9')">9</button>
+            <button class="calc-button operatorButton" onclick="setOperation('*')">×</button>
+            
+            <button class="calc-button digitButton" onclick="appendNumber('4')">4</button>
+            <button class="calc-button digitButton" onclick="appendNumber('5')">5</button>
+            <button class="calc-button digitButton" onclick="appendNumber('6')">6</button>
+            <button class="calc-button operatorButton" onclick="setOperation('-')">-</button>
+            
+            <button class="calc-button digitButton" onclick="appendNumber('1')">1</button>
+            <button class="calc-button digitButton" onclick="appendNumber('2')">2</button>
+            <button class="calc-button digitButton" onclick="appendNumber('3')">3</button>
+            <button class="calc-button operatorButton" onclick="setOperation('+')">+</button>
+            
+            <button class="calc-button digitButton span-2" onclick="appendNumber('0')">0</button>
+            <button class="calc-button digitButton" onclick="appendDecimal()">.</button>
+            <button class="calc-button equalButton" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentInput = '0';
+        let previousInput = '';
+        let operation = null;
+        let resetInput = false;
+
+        const inputBox = document.getElementById('inputBox');
+
+        function updateDisplay() {
+            inputBox.value = currentInput;
+        }
+
+        function appendNumber(number) {
+            if (currentInput === '0' || resetInput) {
+                currentInput = number;
+                resetInput = false;
+            } else {
+                currentInput += number;
+            }
+            updateDisplay();
+        }
+
+        function appendDecimal() {
+            if (resetInput) {
+                currentInput = '0.';
+                resetInput = false;
+                updateDisplay();
+                return;
+            }
+            
+            if (!currentInput.includes('.')) {
+                currentInput += '.';
+                updateDisplay();
+            }
+        }
+
+        function clearDisplay() {
+            currentInput = '0';
+            previousInput = '';
+            operation = null;
+            updateDisplay();
+        }
+
+        function toggleSign() {
+            currentInput = (parseFloat(currentInput) * -1).toString();
+            updateDisplay();
+        }
+
+        function percentage() {
+            currentInput = (parseFloat(currentInput) / 100).toString();
+            updateDisplay();
+        }
+
+        function setOperation(op) {
+            if (operation !== null) calculate();
+            previousInput = currentInput;
+            operation = op;
+            resetInput = true;
+        }
+
+        function calculate() {
+            if (operation === null || resetInput) return;
+            
+            let result;
+            const prev = parseFloat(previousInput);
+            const current = parseFloat(currentInput);
+
+            switch (operation) {
+                case '+':
+                    result = prev + current;
+                    break;
+                case '-':
+                    result = prev - current;
+                    break;
+                case '*':
+                    result = prev * current;
+                    break;
+                case '/':
+                    result = prev / current;
+                    break;
+                default:
+                    return;
+            }
+
+            currentInput = result.toString();
+            operation = null;
+            resetInput = true;
+            updateDisplay();
+        }
+
+        
+        updateDisplay();
+    </script>
+</body>
+</html>
